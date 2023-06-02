@@ -2,8 +2,10 @@
 
 ## Setup
 
+```bash
 npm install
 cp .env.example .env
+```
 
 ## Test
 
