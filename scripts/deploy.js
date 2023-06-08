@@ -22,12 +22,15 @@ async function main() {
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const Token = await ethers.getContractFactory("Wistaverse");
-  const token = await Token.deploy();
-  await token.deployed();
+  const Wistaverse = await ethers.getContractFactory("Wistaverse");
+  const wistaverse = await Wistaverse.deploy();
+  await wistaverse.deployed();
+  console.log("Wistaverse address:", wistaverse.address);
 
-  console.log("Token address:", token.address);
-
+  const StakingContract = await ethers.getContractFactory("StakingContract");
+  const stakingContract = await StakingContract.deploy(wistaverse.address);
+  await stakingContract.deployed();
+  console.log("StakingContract address:", stakingContract.address);
 }
 
 main()

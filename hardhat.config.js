@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomiclabs/hardhat-etherscan");
 
 // The next line is part of the sample project, you don't need it in your
 // project. It imports a Hardhat task definition, that can be used for
@@ -6,7 +7,7 @@ require("@nomicfoundation/hardhat-toolbox");
 
 require('dotenv').config();
 
-const { INFURA_PROJECT_ID, PRIVATE_KEY } = process.env;
+const { INFURA_PROJECT_ID, PRIVATE_KEY,POLYGONSCAN_API_KEY } = process.env;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -20,5 +21,8 @@ module.exports = {
       url: `https://rpc-mumbai.maticvigil.com`,
       accounts: [PRIVATE_KEY],
     }
-  }
+  },
+  etherscan: {
+    apiKey: POLYGONSCAN_API_KEY,
+ }
 };
