@@ -4,6 +4,7 @@ const { expect } = require("chai");
 describe("WistaverseStaking", function () {
   let stakingContract;
   let wistaverseToken;
+  let wistakeToken;
   let owner;
   let user1;
   let user2;
@@ -13,6 +14,7 @@ describe("WistaverseStaking", function () {
 
   beforeEach(async function () {
     const WistaverseToken = await ethers.getContractFactory("Wistaverse");
+    const WistakeToken = await ethers.getContractFactory("Wistake");
     const StakingContract = await ethers.getContractFactory("StakingContract");
 
     [owner, user1, user2] = await ethers.getSigners();
@@ -20,7 +22,10 @@ describe("WistaverseStaking", function () {
     wistaverseToken = await WistaverseToken.deploy();
     await wistaverseToken.deployed();
 
-    stakingContract = await StakingContract.deploy(wistaverseToken.address);
+    wistakeToken = await WistakeToken.deploy();
+    await wistakeToken.deployed();
+
+    stakingContract = await StakingContract.deploy(wistaverseToken.address, wistakeToken.address);
     await stakingContract.deployed();
   });
 

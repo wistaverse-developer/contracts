@@ -1,36 +1,37 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract StakingContract is Ownable {
-    IERC20 private token;
+    ERC20 private wistaverseToken;
+    ERC20 private wistakeToken;
     mapping(address => uint256) private balances;
-    address[] private stakers; // Tableau pour stocker les adresses des stakers
-
+    address[] private stakers;
     event Staked(address indexed user, uint256 amount);
     event Unstaked(address indexed user, uint256 amount);
+    constructor(address _wistaverseTokenAddress, address _wistakeTokenAddress) {
+        wistaverseToken = ERC20(_wistaverseTokenAddress);
+        wistakeToken = ERC20(_wistakeTokenAddress);
+    }
 
-    constructor(address _tokenAddress) {
-        token = IERC20(_tokenAddress);
+    function wistakeProvision(uint256 amount) external onlyOwner {
+        wistakeToken.transferFrom(msg.sender, address(this), amount);
     }
 
     function stake(uint256 amount) external {
         require(amount > 0, "Amount must be greater than 0");
         require(
-            token.balanceOf(msg.sender) >= amount,
-            "Insufficient token balance"
+            wistaverseToken.balanceOf(msg.sender) >= amount,
+            "Insufficient wistaverseToken balance"
         );
-
-        token.transferFrom(msg.sender, address(this), amount);
         balances[msg.sender] += amount;
-
-        // Enregistrer l'adresse du staker uniquement s'il n'est pas déjà enregistré
         if (!isStaker(msg.sender)) {
             stakers.push(msg.sender);
         }
-
+        wistaverseToken.transferFrom(msg.sender, address(this), amount);
+        wistakeToken.transfer(msg.sender, amount);
         emit Staked(msg.sender, amount);
     }
 
@@ -40,10 +41,9 @@ contract StakingContract is Ownable {
             balances[msg.sender] >= amount,
             "Insufficient staked balance"
         );
-
         balances[msg.sender] -= amount;
-        token.transfer(msg.sender, amount);
-
+        wistakeToken.transferFrom(msg.sender, address(this), amount);
+        wistaverseToken.transfer(msg.sender, amount);
         emit Unstaked(msg.sender, amount);
     }
 
