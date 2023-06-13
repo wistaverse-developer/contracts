@@ -3,14 +3,18 @@ pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 contract StakingContract is Ownable {
+    using EnumerableSet for EnumerableSet.AddressSet;
+
     ERC20 private wistaverseToken;
     ERC20 private wistakeToken;
     mapping(address => uint256) private balances;
-    address[] private stakers;
+    EnumerableSet.AddressSet private stakers;
     event Staked(address indexed user, uint256 amount);
     event Unstaked(address indexed user, uint256 amount);
+
     constructor(address _wistaverseTokenAddress, address _wistakeTokenAddress) {
         wistaverseToken = ERC20(_wistaverseTokenAddress);
         wistakeToken = ERC20(_wistakeTokenAddress);
@@ -27,9 +31,7 @@ contract StakingContract is Ownable {
             "Insufficient wistaverseToken balance"
         );
         balances[msg.sender] += amount;
-        if (!isStaker(msg.sender)) {
-            stakers.push(msg.sender);
-        }
+        stakers.add(msg.sender);
         wistaverseToken.transferFrom(msg.sender, address(this), amount);
         wistakeToken.transfer(msg.sender, amount);
         emit Staked(msg.sender, amount);
@@ -41,10 +43,15 @@ contract StakingContract is Ownable {
             balances[msg.sender] >= amount,
             "Insufficient staked balance"
         );
+
         balances[msg.sender] -= amount;
         wistakeToken.transferFrom(msg.sender, address(this), amount);
         wistaverseToken.transfer(msg.sender, amount);
         emit Unstaked(msg.sender, amount);
+
+        if (balances[msg.sender] == 0) {
+            stakers.remove(msg.sender);
+        }
     }
 
     function getStakedBalance(address user) external view returns (uint256) {
@@ -52,15 +59,17 @@ contract StakingContract is Ownable {
     }
 
     function getStakers() external view returns (address[] memory) {
-        return stakers;
+        uint256 stakerCount = stakers.length();
+        address[] memory stakerAddresses = new address[](stakerCount);
+
+        for (uint256 i = 0; i < stakerCount; i++) {
+            stakerAddresses[i] = stakers.at(i);
+        }
+
+        return stakerAddresses;
     }
 
     function isStaker(address user) public view returns (bool) {
-        for (uint256 i = 0; i < stakers.length; i++) {
-            if (stakers[i] == user) {
-                return true;
-            }
-        }
-        return false;
+        return stakers.contains(user);
     }
 }
