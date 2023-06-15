@@ -58,17 +58,6 @@ contract StakingContract is Ownable {
         return balances[user];
     }
 
-    function getStakers() external view returns (address[] memory) {
-        uint256 stakerCount = stakers.length();
-        address[] memory stakerAddresses = new address[](stakerCount);
-
-        for (uint256 i = 0; i < stakerCount; i++) {
-            stakerAddresses[i] = stakers.at(i);
-        }
-
-        return stakerAddresses;
-    }
-
     function isStaker(address user) public view returns (bool) {
         return stakers.contains(user);
     }
