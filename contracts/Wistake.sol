@@ -20,4 +20,8 @@ contract Wistake is ERC20, Ownable {
         _transfer(_msgSender(), recipient, amount);
         return true;
     }
+
+    function getOwnerBalance() public view onlyOwner returns (uint256) {
+        return balanceOf(owner());
+    }
 }
