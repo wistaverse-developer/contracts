@@ -12,12 +12,15 @@ contract StakingContract is Ownable {
     ERC20 private wistakeToken;
     mapping(address => uint256) private balances;
     EnumerableSet.AddressSet private stakers;
+    uint256 private totalStaked;
+    uint256 private stakeAmount; // Variable pour le montant de mise
     event Staked(address indexed user, uint256 amount);
     event Unstaked(address indexed user, uint256 amount);
 
-    constructor(address _wistaverseTokenAddress, address _wistakeTokenAddress) {
+    constructor(address _wistaverseTokenAddress, address _wistakeTokenAddress, uint256 _stakeAmount) {
         wistaverseToken = ERC20(_wistaverseTokenAddress);
         wistakeToken = ERC20(_wistakeTokenAddress);
+        stakeAmount = _stakeAmount;
     }
 
     function wistakeProvision(uint256 amount) external onlyOwner {
@@ -25,20 +28,21 @@ contract StakingContract is Ownable {
     }
 
     function stake(uint256 amount) external {
-        require(amount > 0, "Amount must be greater than 0");
+        require(amount == stakeAmount, "Amount must be equal to stake amount"); // Vérifier que le montant est égal au montant de mise
         require(
             wistaverseToken.balanceOf(msg.sender) >= amount,
             "Insufficient wistaverseToken balance"
         );
         balances[msg.sender] += amount;
         stakers.add(msg.sender);
+        totalStaked += amount;
         wistaverseToken.transferFrom(msg.sender, address(this), amount);
         wistakeToken.transfer(msg.sender, amount);
         emit Staked(msg.sender, amount);
     }
 
     function unstake(uint256 amount) external {
-        require(amount > 0, "Amount must be greater than 0");
+        require(amount == stakeAmount, "Amount must be equal to stake amount"); // Vérifier que le montant est égal au montant de mise
         require(
             balances[msg.sender] >= amount,
             "Insufficient staked balance"
@@ -52,6 +56,8 @@ contract StakingContract is Ownable {
         if (balances[msg.sender] == 0) {
             stakers.remove(msg.sender);
         }
+
+        totalStaked -= amount;
     }
 
     function getStakedBalance(address user) external view returns (uint256) {
@@ -69,5 +75,9 @@ contract StakingContract is Ownable {
         uint256 contractBalance = token.balanceOf(address(this));
         require(contractBalance >= amount, "Insufficient contract balance");
         token.transfer(msg.sender, amount);
+    }
+
+    function getStakeAmount() external view returns (uint256) {
+        return stakeAmount;
     }
 }
