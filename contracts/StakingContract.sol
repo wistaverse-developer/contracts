@@ -28,7 +28,7 @@ contract StakingContract is Ownable {
     }
 
     function stake(uint256 amount) external {
-        require(amount == stakeAmount, "Amount must be equal to stake amount"); // Vérifier que le montant est égal au montant de mise
+        require(amount == stakeAmount, "Amount must be equal to stake amount");
         require(
             wistaverseToken.balanceOf(msg.sender) >= amount,
             "Insufficient wistaverseToken balance"
@@ -42,7 +42,7 @@ contract StakingContract is Ownable {
     }
 
     function unstake(uint256 amount) external {
-        require(amount == stakeAmount, "Amount must be equal to stake amount"); // Vérifier que le montant est égal au montant de mise
+        require(amount == stakeAmount, "Amount must be equal to stake amount");
         require(
             balances[msg.sender] >= amount,
             "Insufficient staked balance"
