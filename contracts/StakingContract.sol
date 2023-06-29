@@ -13,7 +13,7 @@ contract StakingContract is Ownable {
     mapping(address => uint256) private balances;
     EnumerableSet.AddressSet private stakers;
     uint256 private totalStaked;
-    uint256 private stakeAmount; // Variable pour le montant de mise
+    uint256 private stakeAmount;
     event Staked(address indexed user, uint256 amount);
     event Unstaked(address indexed user, uint256 amount);
 
@@ -28,7 +28,6 @@ contract StakingContract is Ownable {
     }
 
     function stake(uint256 amount) external {
-        require(amount == stakeAmount, "Amount must be equal to stake amount");
         require(
             wistaverseToken.balanceOf(msg.sender) >= amount,
             "Insufficient wistaverseToken balance"
@@ -42,7 +41,6 @@ contract StakingContract is Ownable {
     }
 
     function unstake(uint256 amount) external {
-        require(amount == stakeAmount, "Amount must be equal to stake amount");
         require(
             balances[msg.sender] >= amount,
             "Insufficient staked balance"

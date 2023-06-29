@@ -33,7 +33,7 @@ async function main() {
 //  console.log("Wistake address:", wistake.address);
 
   const StakingContract = await ethers.getContractFactory("StakingContract");
-  const stakingContract = await StakingContract.deploy("0xB7042C40De76CFc607aC05e68F9C28A778F0C8a6", "0x376D7A04BE9CD5c932A1B177801f2ff88A46a3E8", 0);
+  const stakingContract = await StakingContract.deploy("0xB7042C40De76CFc607aC05e68F9C28A778F0C8a6", "0x6F7bB8111b47B0401684033f62d53510E76dc342", 0);
   await stakingContract.deployed();
   console.log("StakingContract address:", stakingContract.address);
 }
