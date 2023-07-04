@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier : MIT
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -67,7 +67,7 @@ contract StakingContract is Ownable {
     }
 
     function withdrawTokens(address tokenAddress, uint256 amount) external onlyOwner {
-        require(tokenAddress != address(wistaverseToken), "Cannot withdraw wistaverseToken");
+        require(tokenAddress != address(wistaverseToken), "Cannot  withdraw wistaverseToken");
         require(tokenAddress != address(wistakeToken), "Cannot withdraw wistakeToken");
         ERC20 token = ERC20(tokenAddress);
         uint256 contractBalance = token.balanceOf(address(this));
