@@ -17,8 +17,7 @@ contract Wistake is ERC20, Ownable {
 
     function transfer(address recipient, uint256 amount) public override returns (bool) {
         require(msg.sender == owner() || msg.sender == stakingContract, "Wistake Only allowed from owner or staking contract");
-        _transfer(_msgSender(), recipient, amount);
-        return true;
+        return super.transfer(recipient, amount);
     }
 
     function getOwnerBalance() public view onlyOwner returns (uint256) {
